@@ -2,7 +2,7 @@ package com.utp.logiconstruction.servlet;
 
 import com.utp.logiconstruction.dao.ProveedorDAO;
 import com.utp.logiconstruction.modelo.Proveedor;
-
+import com.utp.logiconstruction.util.AuthUtil;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,16 +17,18 @@ public class ProveedorServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String accion = request.getParameter("accion");
+        if (!AuthUtil.validarAcceso(request, response, AuthUtil.JEFE_LOGISTICA)) {
+            return;
+        }
 
+        request.setCharacterEncoding("UTF-8");
+        String accion = request.getParameter("accion");
         ProveedorDAO dao = new ProveedorDAO();
 
         if ("eliminar".equals(accion)) {
-
             int id = Integer.parseInt(request.getParameter("id"));
             dao.eliminarProveedor(id);
-
-            response.sendRedirect("proveedores.jsp");
+            response.sendRedirect("proveedores.jsp?eliminado=1");
             return;
         }
 
@@ -36,7 +38,6 @@ public class ProveedorServlet extends HttpServlet {
         String correo = request.getParameter("correo");
 
         Proveedor proveedor = new Proveedor(nombre, ruc, telefono, correo);
-
         boolean registrado = dao.registrarProveedor(proveedor);
 
         if (registrado) {

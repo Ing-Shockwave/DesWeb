@@ -1,9 +1,29 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="com.utp.logiconstruction.dao.RequerimientoDAO"%>
 <%@page import="com.utp.logiconstruction.modelo.Requerimiento"%>
+<%@page import="com.utp.logiconstruction.modelo.Usuario"%>
+<%@page import="com.utp.logiconstruction.util.AuthUtil"%>
 <%@page import="java.util.List"%>
 
 <%
+    Usuario usuario = (Usuario) session.getAttribute("usuario");
+
+    if (usuario == null) {
+        response.sendRedirect("login.jsp");
+        return;
+    }
+
+    String rol = usuario.getRol();
+    boolean esAdministradorObra = AuthUtil.ADMINISTRADOR_OBRA.equals(rol);
+    boolean esJefeLogistica = AuthUtil.JEFE_LOGISTICA.equals(rol);
+    boolean esGerencia = AuthUtil.GERENCIA.equals(rol);
+    String rolNombre = AuthUtil.nombreRol(rol);
+
+    if (!esAdministradorObra && !esJefeLogistica) {
+        response.sendRedirect("dashboard.jsp?acceso=denegado");
+        return;
+    }
+
     RequerimientoDAO dao = new RequerimientoDAO();
     List<Requerimiento> requerimientos = dao.listarRequerimientos();
 %>
@@ -18,7 +38,7 @@
     <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <link rel="stylesheet" href="css/estilos.css">
+    <link rel="stylesheet" href="css/estilos.css?v=menu4">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
@@ -38,11 +58,13 @@
     </div>
 
     <nav class="req-menu">
+
         <a href="dashboard.jsp">
             <i class="fa-solid fa-chart-column"></i>
             Dashboard
         </a>
 
+        <% if (esJefeLogistica) { %>
         <a href="compras.jsp">
             <i class="fa-solid fa-cart-shopping"></i>
             Compras
@@ -52,19 +74,31 @@
             <i class="fa-solid fa-users"></i>
             Proveedores
         </a>
+        <% } %>
 
+        <% if (esAdministradorObra || esJefeLogistica) { %>
         <a class="activo" href="requerimientos.jsp">
-            <i class="fa-solid fa-clipboard-list"></i>
+            <i class="fa-solid fa-file-lines"></i>
             Requerimientos
         </a>
+        <% } %>
 
+        <% if (esGerencia) { %>
         <a href="reportes.jsp">
             <i class="fa-solid fa-chart-simple"></i>
             Reportes
         </a>
+        <% } %>
+
     </nav>
 
-    <a class="req-logout" href="login.jsp">
+    <div class="req-user">
+        <strong><%= usuario.getNombre() %></strong>
+        <small>Rol: <%= rolNombre %></small>
+        <small>Sesión activa</small>
+    </div>
+
+    <a class="req-logout" href="LogoutServlet">
         <i class="fa-solid fa-right-from-bracket"></i>
         Cerrar Sesión
     </a>
@@ -249,7 +283,7 @@
     </section>
 
     <footer class="app-footer">
-        LogiConstruction v1.0 | Sistema de Gestión Logística | Módulo de Requerimientos
+        LogiConstruction v1.0 | Sistema de Gestión Logística | Usuario: <%= usuario.getNombre() %>
     </footer>
 
 </main>

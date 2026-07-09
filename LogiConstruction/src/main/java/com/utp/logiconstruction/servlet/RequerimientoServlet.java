@@ -2,7 +2,7 @@ package com.utp.logiconstruction.servlet;
 
 import com.utp.logiconstruction.dao.RequerimientoDAO;
 import com.utp.logiconstruction.modelo.Requerimiento;
-
+import com.utp.logiconstruction.util.AuthUtil;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,13 +17,17 @@ public class RequerimientoServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        RequerimientoDAO dao = new RequerimientoDAO();
+        if (!AuthUtil.validarAcceso(request, response,
+                AuthUtil.ADMINISTRADOR_OBRA, AuthUtil.JEFE_LOGISTICA)) {
+            return;
+        }
 
+        request.setCharacterEncoding("UTF-8");
+        RequerimientoDAO dao = new RequerimientoDAO();
         String accion = request.getParameter("accion");
 
         if ("eliminar".equals(accion)) {
             int id = Integer.parseInt(request.getParameter("id"));
-
             boolean eliminado = dao.eliminarRequerimiento(id);
 
             if (eliminado) {
@@ -31,7 +35,6 @@ public class RequerimientoServlet extends HttpServlet {
             } else {
                 response.sendRedirect("requerimientos.jsp?error=1");
             }
-
             return;
         }
 
@@ -41,7 +44,6 @@ public class RequerimientoServlet extends HttpServlet {
         String fecha = request.getParameter("fecha");
 
         Requerimiento requerimiento = new Requerimiento(nombre, area, cantidad, fecha);
-
         boolean registrado = dao.registrarRequerimiento(requerimiento);
 
         if (registrado) {

@@ -1,6 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="com.utp.logiconstruction.modelo.Usuario"%>
 <%@page import="com.utp.logiconstruction.dao.ReporteDAO"%>
+<%@page import="com.utp.logiconstruction.util.AuthUtil"%>
 
 <%
     Usuario usuario = (Usuario) session.getAttribute("usuario");
@@ -9,6 +10,12 @@
         response.sendRedirect("login.jsp");
         return;
     }
+
+    String rol = usuario.getRol();
+    boolean esAdministradorObra = AuthUtil.ADMINISTRADOR_OBRA.equals(rol);
+    boolean esJefeLogistica = AuthUtil.JEFE_LOGISTICA.equals(rol);
+    boolean esGerencia = AuthUtil.GERENCIA.equals(rol);
+    String rolNombre = AuthUtil.nombreRol(rol);
 
     ReporteDAO dao = new ReporteDAO();
 
@@ -29,7 +36,7 @@
 
     <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="css/estilos.css">
+    <link rel="stylesheet" href="css/estilos.css?v=menu4">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
 </head>
@@ -58,6 +65,7 @@
             Dashboard
         </a>
 
+        <% if (esJefeLogistica) { %>
         <a href="compras.jsp">
             <i class="fa-solid fa-cart-shopping"></i>
             Compras
@@ -67,26 +75,31 @@
             <i class="fa-solid fa-users"></i>
             Proveedores
         </a>
+        <% } %>
 
+        <% if (esAdministradorObra || esJefeLogistica) { %>
         <a href="requerimientos.jsp">
             <i class="fa-solid fa-file-lines"></i>
             Requerimientos
         </a>
+        <% } %>
 
+        <% if (esGerencia) { %>
         <a href="reportes.jsp">
             <i class="fa-solid fa-chart-simple"></i>
             Reportes
         </a>
+        <% } %>
 
     </nav>
 
     <div class="dash-user">
         <strong><%= usuario.getNombre() %></strong>
-        <small>Rol: <%= usuario.getRol() %></small>
+        <small>Rol: <%= rolNombre %></small>
         <small>Sesión activa</small>
     </div>
 
-    <a class="dash-logout" href="login.jsp">
+    <a class="dash-logout" href="LogoutServlet">
         <i class="fa-solid fa-right-from-bracket"></i>
         Cerrar Sesión
     </a>
@@ -197,7 +210,9 @@
                     costos y balances logísticos.
                 </p>
 
+                <% if (esGerencia) { %>
                 <a href="reportes.jsp">Ver analíticas ›</a>
+                <% } %>
 
             </div>
 
@@ -272,6 +287,20 @@ document.getElementById('buscarDashboard').addEventListener('keyup', function() 
     });
 });
 </script>
+
+
+<% if ("denegado".equals(request.getParameter("acceso"))) { %>
+<script>
+Swal.fire({
+    icon: 'warning',
+    title: 'Acceso denegado',
+    text: 'Tu rol no tiene permiso para ingresar a ese módulo.',
+    background: '#0f172a',
+    color: '#ffffff',
+    confirmButtonColor: '#00c6ff'
+});
+</script>
+<% } %>
 
 </body>
 </html>

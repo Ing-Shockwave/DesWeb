@@ -1,8 +1,28 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="com.utp.logiconstruction.dao.ReporteDAO"%>
+<%@page import="com.utp.logiconstruction.modelo.Usuario"%>
+<%@page import="com.utp.logiconstruction.util.AuthUtil"%>
 <%@page import="java.util.List"%>
 
 <%
+    Usuario usuario = (Usuario) session.getAttribute("usuario");
+
+    if (usuario == null) {
+        response.sendRedirect("login.jsp");
+        return;
+    }
+
+    String rol = usuario.getRol();
+    boolean esAdministradorObra = AuthUtil.ADMINISTRADOR_OBRA.equals(rol);
+    boolean esJefeLogistica = AuthUtil.JEFE_LOGISTICA.equals(rol);
+    boolean esGerencia = AuthUtil.GERENCIA.equals(rol);
+    String rolNombre = AuthUtil.nombreRol(rol);
+
+    if (!esGerencia) {
+        response.sendRedirect("dashboard.jsp?acceso=denegado");
+        return;
+    }
+
     ReporteDAO dao = new ReporteDAO();
 
     int totalCompras = dao.contarCompras();
@@ -39,7 +59,7 @@
     <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <link rel="stylesheet" href="css/estilos.css">
+    <link rel="stylesheet" href="css/estilos.css?v=menu4">
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -56,6 +76,7 @@
 
         <div>
             <h2>Logi<span>Con</span></h2>
+            <p>PRO VERSION</p>
         </div>
     </div>
 
@@ -66,6 +87,7 @@
             Dashboard
         </a>
 
+        <% if (esJefeLogistica) { %>
         <a href="compras.jsp">
             <i class="fa-solid fa-cart-shopping"></i>
             Compras
@@ -75,20 +97,31 @@
             <i class="fa-solid fa-users"></i>
             Proveedores
         </a>
+        <% } %>
 
+        <% if (esAdministradorObra || esJefeLogistica) { %>
         <a href="requerimientos.jsp">
             <i class="fa-solid fa-file-lines"></i>
             Requerimientos
         </a>
+        <% } %>
 
+        <% if (esGerencia) { %>
         <a class="activo" href="reportes.jsp">
             <i class="fa-solid fa-chart-simple"></i>
             Reportes
         </a>
+        <% } %>
 
     </nav>
 
-    <a class="rep-logout" href="login.jsp">
+    <div class="rep-user">
+        <strong><%= usuario.getNombre() %></strong>
+        <small>Rol: <%= rolNombre %></small>
+        <small>Sesión activa</small>
+    </div>
+
+    <a class="rep-logout" href="LogoutServlet">
         <i class="fa-solid fa-right-from-bracket"></i>
         Cerrar Sesión
     </a>

@@ -2,8 +2,28 @@
 <%@page import="java.util.List"%>
 <%@page import="com.utp.logiconstruction.modelo.Proveedor"%>
 <%@page import="com.utp.logiconstruction.dao.ProveedorDAO"%>
+<%@page import="com.utp.logiconstruction.modelo.Usuario"%>
+<%@page import="com.utp.logiconstruction.util.AuthUtil"%>
 
 <%
+    Usuario usuario = (Usuario) session.getAttribute("usuario");
+
+    if (usuario == null) {
+        response.sendRedirect("login.jsp");
+        return;
+    }
+
+    String rol = usuario.getRol();
+    boolean esAdministradorObra = AuthUtil.ADMINISTRADOR_OBRA.equals(rol);
+    boolean esJefeLogistica = AuthUtil.JEFE_LOGISTICA.equals(rol);
+    boolean esGerencia = AuthUtil.GERENCIA.equals(rol);
+    String rolNombre = AuthUtil.nombreRol(rol);
+
+    if (!esJefeLogistica) {
+        response.sendRedirect("dashboard.jsp?acceso=denegado");
+        return;
+    }
+
     ProveedorDAO dao = new ProveedorDAO();
     List<Proveedor> lista = dao.listarProveedores();
 %>
@@ -18,7 +38,7 @@
     <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <link rel="stylesheet" href="css/estilos.css">
+    <link rel="stylesheet" href="css/estilos.css?v=menu4">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
 </head>
@@ -47,6 +67,7 @@
             Dashboard
         </a>
 
+        <% if (esJefeLogistica) { %>
         <a href="compras.jsp">
             <i class="fa-solid fa-cart-shopping"></i>
             Compras
@@ -56,26 +77,31 @@
             <i class="fa-solid fa-users"></i>
             Proveedores
         </a>
+        <% } %>
 
+        <% if (esAdministradorObra || esJefeLogistica) { %>
         <a href="requerimientos.jsp">
             <i class="fa-solid fa-file-lines"></i>
             Requerimientos
         </a>
+        <% } %>
 
+        <% if (esGerencia) { %>
         <a href="reportes.jsp">
             <i class="fa-solid fa-chart-simple"></i>
             Reportes
         </a>
+        <% } %>
 
     </nav>
 
     <div class="compras-user">
-        <strong>Admin Obra</strong>
-        <small>Rol: Administrador Logístico</small>
-        <small>ID: #8829</small>
+        <strong><%= usuario.getNombre() %></strong>
+        <small>Rol: <%= rolNombre %></small>
+        <small>Sesión activa</small>
     </div>
 
-    <a class="compras-logout" href="login.jsp">
+    <a class="compras-logout" href="LogoutServlet">
         <i class="fa-solid fa-right-from-bracket"></i>
         Cerrar Sesión
     </a>

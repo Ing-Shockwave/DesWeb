@@ -1,0 +1,18 @@
+BASE DE DATOS ORDENADA - LOGICONSTRUCTION
+
+Archivo principal:
+logiconstruction_ordenado.sql
+
+Indicaciones:
+1. Abrir MySQL Workbench o consola MySQL.
+2. Ejecutar el script completo.
+3. Verificar que se cree la base de datos logiconstruction.
+4. En el sistema web, ingresar a configuracion.jsp y validar la conexión.
+
+Credenciales iniciales del sistema:
+- obra@logiconstruction.com / 123456 / ADMINISTRADOR_OBRA
+- logistica@logiconstruction.com / 123456 / JEFE_LOGISTICA
+- gerencia@logiconstruction.com / 123456 / GERENCIA
+
+Nota:
+Este script elimina tablas anteriores de logiconstruction para dejar una estructura limpia y compatible con el código Java actual.
