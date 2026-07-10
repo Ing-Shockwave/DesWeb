@@ -1,88 +1,109 @@
 package com.utp.logiconstruction.dao;
 
-import com.utp.logiconstruction.conexion.Conexion;
+import com.utp.logiconstruction.jpa.JpaUtil;
 import com.utp.logiconstruction.modelo.Proveedor;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 
 public class ProveedorDAO {
 
+    private String ultimoError;
+
+    public String getUltimoError() {
+        return ultimoError;
+    }
+
     public boolean registrarProveedor(Proveedor proveedor) {
+        EntityManager entityManager = null;
+        EntityTransaction transaction = null;
 
-        String sql = "INSERT INTO proveedores(nombre, ruc, telefono, correo) VALUES(?,?,?,?)";
+        ultimoError = null;
 
-        try (
-            Connection con = Conexion.conectar();
-            PreparedStatement ps = con.prepareStatement(sql)
-        ) {
-
-            ps.setString(1, proveedor.getNombre());
-            ps.setString(2, proveedor.getRuc());
-            ps.setString(3, proveedor.getTelefono());
-            ps.setString(4, proveedor.getCorreo());
-
-            ps.executeUpdate();
-
+        try {
+            entityManager = JpaUtil.crearEntityManager();
+            transaction = entityManager.getTransaction();
+            transaction.begin();
+            entityManager.persist(proveedor);
+            transaction.commit();
             return true;
-
-        } catch (SQLException e) {
+        } catch (Exception e) {
+            if (transaction != null && transaction.isActive()) {
+                transaction.rollback();
+            }
+            ultimoError = obtenerMensajeCompleto(e);
             e.printStackTrace();
             return false;
+        } finally {
+            if (entityManager != null && entityManager.isOpen()) {
+                entityManager.close();
+            }
         }
     }
 
     public List<Proveedor> listarProveedores() {
+        EntityManager entityManager = null;
 
-        List<Proveedor> lista = new ArrayList<>();
+        try {
+            entityManager = JpaUtil.crearEntityManager();
+            return entityManager
+                    .createQuery("SELECT p FROM Proveedor p ORDER BY p.id DESC", Proveedor.class)
+                    .getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        } finally {
+            if (entityManager != null && entityManager.isOpen()) {
+                entityManager.close();
+            }
+        }
+    }
 
-        String sql = "SELECT * FROM proveedores ORDER BY id DESC";
+    public boolean eliminarProveedor(int id) {
+        EntityManager entityManager = null;
+        EntityTransaction transaction = null;
 
-        try (
-            Connection con = Conexion.conectar();
-            PreparedStatement ps = con.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery()
-        ) {
+        try {
+            entityManager = JpaUtil.crearEntityManager();
+            transaction = entityManager.getTransaction();
+            transaction.begin();
 
-            while (rs.next()) {
-                Proveedor proveedor = new Proveedor();
-
-                proveedor.setId(rs.getInt("id"));
-                proveedor.setNombre(rs.getString("nombre"));
-                proveedor.setRuc(rs.getString("ruc"));
-                proveedor.setTelefono(rs.getString("telefono"));
-                proveedor.setCorreo(rs.getString("correo"));
-
-                lista.add(proveedor);
+            Proveedor proveedor = entityManager.find(Proveedor.class, id);
+            if (proveedor != null) {
+                entityManager.remove(proveedor);
             }
 
-        } catch (SQLException e) {
+            transaction.commit();
+            return true;
+        } catch (Exception e) {
+            if (transaction != null && transaction.isActive()) {
+                transaction.rollback();
+            }
             e.printStackTrace();
+            return false;
+        } finally {
+            if (entityManager != null && entityManager.isOpen()) {
+                entityManager.close();
+            }
+        }
+    }
+
+    private String obtenerMensajeCompleto(Throwable throwable) {
+        StringBuilder mensaje = new StringBuilder();
+        Throwable actual = throwable;
+
+        while (actual != null) {
+            if (actual.getMessage() != null) {
+                if (mensaje.length() > 0) {
+                    mensaje.append(" | ");
+                }
+                mensaje.append(actual.getMessage());
+            }
+            actual = actual.getCause();
         }
 
-        return lista;
+        return mensaje.toString();
     }
-    
-    public boolean eliminarProveedor(int id) {
 
-    String sql = "DELETE FROM proveedores WHERE id = ?";
-
-    try (
-        Connection con = Conexion.conectar();
-        PreparedStatement ps = con.prepareStatement(sql)
-    ) {
-
-        ps.setInt(1, id);
-        ps.executeUpdate();
-        return true;
-
-    } catch (SQLException e) {
-        e.printStackTrace();
-        return false;
-    }
-} 
 }

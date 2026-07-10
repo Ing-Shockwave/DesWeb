@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+
+<h:head>
+    <meta charset="UTF-8" />
+    <title>Demo JSF - Requerimientos</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="css/estilos.css?v=jsf1" />
+</h:head>
+
+<h:body styleClass="req-page">
+
+    <div class="req-sidebar">
+
+        <div class="req-logo">
+            <div class="req-logo-icon">
+                <i class="fa-solid fa-helmet-safety"></i>
+            </div>
+
+            <div>
+                <h2>Logi<span>Con</span></h2>
+                <p>PRO VERSION</p>
+            </div>
+        </div>
+
+        <nav class="req-menu">
+            <a href="dashboard.jsp">
+                <i class="fa-solid fa-chart-column"></i>
+                Dashboard
+            </a>
+
+            <a href="requerimientos.jsp">
+                <i class="fa-solid fa-file-lines"></i>
+                Requerimientos
+            </a>
+
+            <a class="activo" href="requerimientos-jsf.xhtml">
+                <i class="fa-solid fa-code"></i>
+                Demo JSF
+            </a>
+        </nav>
+
+        <div class="req-user">
+            <strong>#{requerimientoJsfBean.usuarioNombre}</strong>
+            <small>Rol: #{requerimientoJsfBean.rolNombre}</small>
+            <small>Sesión activa</small>
+        </div>
+
+        <a class="req-logout" href="LogoutServlet">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Cerrar Sesión
+        </a>
+
+    </div>
+
+    <main class="req-main">
+
+        <header class="req-header">
+            <div>
+                <h1>Demo JSF - Requerimientos</h1>
+                <p>Página demostrativa con componentes JSF, validaciones y tabla de datos.</p>
+            </div>
+
+            <div class="req-team">
+                <span>JSF</span>
+                <span>2.3</span>
+                <strong>Administrador de Obra</strong>
+            </div>
+        </header>
+
+        <section class="req-body">
+
+            <div class="req-form-card">
+
+                <div class="req-title">
+                    <div class="req-title-icon">
+                        <i class="fa-solid fa-clipboard-check"></i>
+                    </div>
+
+                    <div>
+                        <h2>Registro con JSF</h2>
+                        <p>Formulario adicional para demostrar validaciones JSF en el proyecto final.</p>
+                    </div>
+                </div>
+
+                <h:messages globalOnly="true" layout="list" styleClass="jsf-messages" />
+
+                <h:form id="formRequerimientoJsf" styleClass="req-form">
+
+                    <div>
+                        <label for="nombre">Material requerido</label>
+                        <h:inputText id="nombre"
+                                     value="#{requerimientoJsfBean.nombre}"
+                                     required="true"
+                                     requiredMessage="El material es obligatorio."
+                                     pt:placeholder="Ejemplo: Cemento Portland"
+                                     pt:maxlength="100">
+                            <f:validateLength minimum="2" maximum="100" />
+                        </h:inputText>
+                        <h:message for="nombre" styleClass="jsf-error" />
+                    </div>
+
+                    <div>
+                        <label for="area">Área solicitante</label>
+                        <h:inputText id="area"
+                                     value="#{requerimientoJsfBean.area}"
+                                     required="true"
+                                     requiredMessage="El área solicitante es obligatoria."
+                                     pt:placeholder="Ejemplo: Obra Principal"
+                                     pt:maxlength="100">
+                            <f:validateLength minimum="2" maximum="100" />
+                        </h:inputText>
+                        <h:message for="area" styleClass="jsf-error" />
+                    </div>
+
+                    <div>
+                        <label for="cantidad">Cantidad</label>
+                        <h:inputText id="cantidad"
+                                     value="#{requerimientoJsfBean.cantidad}"
+                                     required="true"
+                                     requiredMessage="La cantidad es obligatoria."
+                                     converterMessage="La cantidad debe ser numérica."
+                                     validatorMessage="La cantidad debe ser mayor a cero."
+                                     pt:type="number"
+                                     pt:min="1"
+                                     pt:placeholder="Ejemplo: 50">
+                            <f:validateLongRange minimum="1" maximum="999999" />
+                        </h:inputText>
+                        <h:message for="cantidad" styleClass="jsf-error" />
+                    </div>
+
+                    <div>
+                        <label for="fecha">Fecha</label>
+                        <h:inputText id="fecha"
+                                     value="#{requerimientoJsfBean.fecha}"
+                                     required="true"
+                                     requiredMessage="La fecha es obligatoria."
+                                     validatorMessage="La fecha debe tener el formato YYYY-MM-DD."
+                                     pt:type="date">
+                            <f:validateRegex pattern="\d{4}-\d{2}-\d{2}" />
+                        </h:inputText>
+                        <h:message for="fecha" styleClass="jsf-error" />
+                    </div>
+
+                    <div class="req-btn-box">
+                        <h:commandButton value="Registrar con JSF"
+                                         action="#{requerimientoJsfBean.registrar}"
+                                         styleClass="jsf-submit" />
+                    </div>
+
+                </h:form>
+            </div>
+
+            <div class="req-table-card">
+
+                <div class="req-table-top">
+                    <div class="req-table-title">
+                        <div class="req-db-icon">
+                            <i class="fa-solid fa-table"></i>
+                        </div>
+
+                        <div>
+                            <h2>Tabla JSF de requerimientos</h2>
+                            <p>Total registrado: #{requerimientoJsfBean.totalRequerimientos}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h:dataTable value="#{requerimientoJsfBean.requerimientos}"
+                             var="r"
+                             styleClass="req-table jsf-data-table"
+                             headerClass="jsf-table-header"
+                             rowClasses="jsf-row-odd,jsf-row-even">
+
+                    <h:column>
+                        <f:facet name="header">ID</f:facet>
+                        <h:outputText value="#{r.id}" />
+                    </h:column>
+
+                    <h:column>
+                        <f:facet name="header">Material</f:facet>
+                        <h:outputText value="#{r.nombre}" />
+                    </h:column>
+
+                    <h:column>
+                        <f:facet name="header">Área</f:facet>
+                        <h:outputText value="#{r.area}" />
+                    </h:column>
+
+                    <h:column>
+                        <f:facet name="header">Cantidad</f:facet>
+                        <h:outputText value="#{r.cantidad}" />
+                    </h:column>
+
+                    <h:column>
+                        <f:facet name="header">Fecha</f:facet>
+                        <h:outputText value="#{r.fecha}" />
+                    </h:column>
+
+                </h:dataTable>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</h:body>
+</html>

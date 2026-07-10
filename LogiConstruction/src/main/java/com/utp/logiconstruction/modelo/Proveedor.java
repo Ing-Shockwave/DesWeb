@@ -1,11 +1,34 @@
 package com.utp.logiconstruction.modelo;
 
-public class Proveedor {
+import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
+@Entity
+@Table(name = "proveedores")
+public class Proveedor implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
+
+    @Column(name = "nombre", nullable = false, length = 100)
     private String nombre;
+
+    @Column(name = "ruc", nullable = false, length = 11)
     private String ruc;
+
+    @Column(name = "telefono", length = 20)
     private String telefono;
+
+    @Column(name = "correo", length = 100)
     private String correo;
 
     public Proveedor() {

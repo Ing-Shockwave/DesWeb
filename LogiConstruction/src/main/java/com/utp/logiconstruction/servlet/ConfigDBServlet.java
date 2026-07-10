@@ -1,6 +1,7 @@
 package com.utp.logiconstruction.servlet;
 
 import com.utp.logiconstruction.conexion.DatabaseConfig;
+import com.utp.logiconstruction.jpa.JpaUtil;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -41,6 +42,7 @@ public class ConfigDBServlet extends HttpServlet {
 
         try (Connection connection = DatabaseConfig.probarConexion(jdbcUrl, dbUser, dbPassword)) {
             DatabaseConfig.guardarConfiguracion(jdbcUrl, dbUser, dbPassword);
+            JpaUtil.reiniciar();
             request.setAttribute("exito", "Conexión exitosa. La configuración fue guardada correctamente.");
         } catch (SQLException e) {
             request.setAttribute("error", "No se pudo conectar a MySQL: " + e.getMessage());
