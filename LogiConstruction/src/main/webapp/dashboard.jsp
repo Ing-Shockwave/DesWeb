@@ -36,7 +36,7 @@
 
     <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="css/estilos.css?v=menu4">
+    <link rel="stylesheet" href="css/estilos.css?v=whatsapp4">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
 </head>
@@ -308,6 +308,9 @@ Swal.fire({
 });
 </script>
 <% } %>
+
+
+<%@ include file="/WEB-INF/jspf/whatsapp-group-button.jspf" %>
 
 </body>
 </html>

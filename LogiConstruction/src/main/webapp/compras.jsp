@@ -36,7 +36,7 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="css/estilos.css?v=validaciones1">
+    <link rel="stylesheet" href="css/estilos.css?v=whatsapp4">
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
@@ -319,6 +319,9 @@ document.querySelectorAll('.btn-eliminar').forEach(boton => {
     });
 });
 </script>
+
+
+<%@ include file="/WEB-INF/jspf/whatsapp-group-button.jspf" %>
 
 </body>
 </html>

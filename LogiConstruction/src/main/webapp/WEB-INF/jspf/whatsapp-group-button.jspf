@@ -1,0 +1,21 @@
+<!-- Botón flotante de acceso al grupo de soporte de WhatsApp -->
+<div class="lc-whatsapp"
+     role="complementary"
+     aria-label="Canal de soporte del proyecto"
+     aria-hidden="true">
+    <span class="lc-whatsapp__tooltip" id="whatsapp-group-label">
+        Contacte al grupo de soporte
+    </span>
+
+    <a class="lc-whatsapp__button"
+       href="https://chat.whatsapp.com/Iv5RKWKGjoK0WuNp50knEG"
+       target="_blank"
+       rel="noopener noreferrer"
+       tabindex="-1"
+       aria-label="Contactar al grupo de soporte de LogiConstruction por WhatsApp"
+       aria-describedby="whatsapp-group-label"
+       title="Contactar al grupo de soporte">
+        <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
+    </a>
+</div>
+<script src="<%= request.getContextPath() %>/js/whatsapp-scroll.js?v=3" defer></script>

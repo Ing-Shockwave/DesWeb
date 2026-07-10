@@ -7,7 +7,7 @@
     <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <link rel="stylesheet" href="css/estilos.css?v=menu4">
+    <link rel="stylesheet" href="css/estilos.css?v=whatsapp-login2">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
@@ -98,7 +98,13 @@
 
             <div class="login-footer">
                 ¿No tienes acceso?
-                <span>Contacta con administración</span>
+                <a class="login-admin-link"
+                   href="https://chat.whatsapp.com/Iv5RKWKGjoK0WuNp50knEG"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Contactar con el grupo de soporte por WhatsApp">
+                    Contacta con administración
+                </a>
             </div>
 
         </div>
