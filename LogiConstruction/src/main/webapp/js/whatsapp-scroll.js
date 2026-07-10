@@ -1,15 +1,16 @@
 (function () {
     'use strict';
 
-    // El botón aparece cuando faltan 220 px o menos para llegar al final.
+    // Los botones aparecen cuando faltan 220 px o menos para llegar al final.
     var END_THRESHOLD_PX = 220;
     var ticking = false;
     var resizeObserver = null;
 
-    function initWhatsAppScrollButton() {
-        var widgets = document.querySelectorAll('.lc-whatsapp');
+    function initSupportButtonsVisibility() {
+        var whatsappWidgets = document.querySelectorAll('.lc-whatsapp');
+        var chatbotWidgets = document.querySelectorAll('.lc-chatbot');
 
-        if (!widgets.length) {
+        if (!whatsappWidgets.length && !chatbotWidgets.length) {
             return;
         }
 
@@ -30,7 +31,7 @@
             var pageHasScroll = documentHeight > viewportHeight + 80;
             var shouldShow = !pageHasScroll || remainingDistance <= END_THRESHOLD_PX;
 
-            widgets.forEach(function (widget) {
+            whatsappWidgets.forEach(function (widget) {
                 var link = widget.querySelector('.lc-whatsapp__button');
 
                 widget.classList.toggle('lc-whatsapp--visible', shouldShow);
@@ -38,6 +39,18 @@
 
                 if (link) {
                     link.setAttribute('tabindex', shouldShow ? '0' : '-1');
+                }
+            });
+
+            chatbotWidgets.forEach(function (widget) {
+                var launcher = widget.querySelector('.lc-chatbot__launcher');
+                var chatbotShouldShow = shouldShow || widget.classList.contains('lc-chatbot--open');
+
+                widget.classList.toggle('lc-chatbot--visible', shouldShow);
+                widget.setAttribute('aria-hidden', chatbotShouldShow ? 'false' : 'true');
+
+                if (launcher) {
+                    launcher.setAttribute('tabindex', chatbotShouldShow ? '0' : '-1');
                 }
             });
 
@@ -54,6 +67,7 @@
         window.addEventListener('scroll', requestUpdate, { passive: true });
         window.addEventListener('resize', requestUpdate);
         window.addEventListener('load', requestUpdate);
+        document.addEventListener('lc-chatbot-toggle', requestUpdate);
 
         // Actualiza el estado si DataTables, JSF u otro componente cambia la altura.
         if ('ResizeObserver' in window && document.body) {
@@ -65,8 +79,8 @@
     }
 
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initWhatsAppScrollButton);
+        document.addEventListener('DOMContentLoaded', initSupportButtonsVisibility);
     } else {
-        initWhatsAppScrollButton();
+        initSupportButtonsVisibility();
     }
 }());

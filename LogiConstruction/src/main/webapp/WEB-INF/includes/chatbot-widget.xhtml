@@ -1,0 +1,83 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <!-- LogiBot: chatbot informativo interno de LogiConstruction -->
+    <div class="lc-chatbot"
+         data-context-path="#{request.contextPath}"
+         aria-live="polite"
+         aria-hidden="true">
+
+        <section class="lc-chatbot__panel"
+                 id="lc-chatbot-panel"
+                 role="dialog"
+                 aria-modal="false"
+                 aria-labelledby="lc-chatbot-title"
+                 hidden="hidden">
+
+            <header class="lc-chatbot__header">
+                <div class="lc-chatbot__identity">
+                    <span class="lc-chatbot__avatar" aria-hidden="true">
+                        <i class="fa-solid fa-robot"></i>
+                    </span>
+                    <div>
+                        <strong id="lc-chatbot-title">LogiBot</strong>
+                        <small><span class="lc-chatbot__status-dot"></span> Asistente informativo</small>
+                    </div>
+                </div>
+
+                <button class="lc-chatbot__close"
+                        type="button"
+                        aria-label="Cerrar LogiBot"
+                        title="Cerrar">
+                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+            </header>
+
+            <div class="lc-chatbot__messages" role="log" aria-label="Conversaci&#243;n con LogiBot">
+                <div class="lc-chatbot__message lc-chatbot__message--bot">
+                    <span class="lc-chatbot__mini-avatar" aria-hidden="true">
+                        <i class="fa-solid fa-robot"></i>
+                    </span>
+                    <div class="lc-chatbot__bubble">
+                        Hola, soy LogiBot. Puedo orientarte seg&#250;n tu rol y consultar informaci&#243;n de compras,
+                        proveedores y requerimientos. No modifico datos del sistema.
+                    </div>
+                </div>
+            </div>
+
+            <div class="lc-chatbot__quick-actions" aria-label="Consultas r&#225;pidas">
+                <button type="button" data-chat-message="&#191;Cu&#225;ntos requerimientos pendientes hay?">Pendientes</button>
+                <button type="button" data-chat-message="&#191;C&#243;mo registro un requerimiento?">Registrar requerimiento</button>
+                <button type="button" data-chat-message="&#191;Cu&#225;l es mi rol?">Mi rol</button>
+            </div>
+
+            <form class="lc-chatbot__form" autocomplete="off">
+                <label class="sr-only" for="lc-chatbot-input">Escribe tu consulta</label>
+                <input id="lc-chatbot-input"
+                       name="mensaje"
+                       type="text"
+                       maxlength="400"
+                       placeholder="Escribe una consulta..."
+                       required="required" />
+                <button type="submit" aria-label="Enviar consulta" title="Enviar">
+                    <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+                </button>
+            </form>
+
+            <div class="lc-chatbot__footer">
+                Respuestas informativas basadas en reglas y datos del sistema.
+            </div>
+        </section>
+
+        <button class="lc-chatbot__launcher"
+                type="button"
+                aria-controls="lc-chatbot-panel"
+                aria-expanded="false"
+                tabindex="-1"
+                aria-label="Abrir LogiBot"
+                title="Abrir asistente virtual">
+            <i class="fa-solid fa-robot" aria-hidden="true"></i>
+            <span class="lc-chatbot__launcher-label">LogiBot</span>
+        </button>
+    </div>
+    <script type="text/javascript" src="#{request.contextPath}/js/chatbot.js?v=2" defer="defer"></script>
+</ui:composition>

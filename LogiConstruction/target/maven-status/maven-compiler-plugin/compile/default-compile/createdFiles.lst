@@ -1,9 +1,11 @@
 com\utp\logiconstruction\api\CompraApiServlet.class
 com\utp\logiconstruction\api\ProveedorApiServlet.class
+com\utp\logiconstruction\filter\Utf8EncodingFilter.class
 com\utp\logiconstruction\jpa\JpaUtil.class
 com\utp\logiconstruction\servlet\RequerimientoServlet.class
 com\utp\logiconstruction\conexion\DatabaseConfig.class
 com\utp\logiconstruction\jsf\RequerimientoJsfBean.class
+com\utp\logiconstruction\chatbot\ChatbotService.class
 com\utp\logiconstruction\modelo\Requerimiento.class
 com\utp\logiconstruction\dao\ReporteDAO.class
 com\utp\logiconstruction\dao\ProveedorDAO.class
@@ -16,10 +18,12 @@ com\utp\logiconstruction\servlet\ProveedorServlet.class
 com\utp\logiconstruction\modelo\Proveedor.class
 com\utp\logiconstruction\dao\CompraDAO.class
 com\utp\logiconstruction\modelo\Usuario.class
+com\utp\logiconstruction\chatbot\ChatbotResponse.class
 com\utp\logiconstruction\api\JsonUtil.class
 com\utp\logiconstruction\conexion\TestConexion.class
 com\utp\logiconstruction\servlet\CompraServlet.class
 com\utp\logiconstruction\util\AuthUtil.class
+com\utp\logiconstruction\chatbot\ChatbotServlet.class
 com\utp\logiconstruction\servlet\LoginServlet.class
 com\utp\logiconstruction\servlet\ConfigDBServlet.class
 com\utp\logiconstruction\conexion\Conexion.class

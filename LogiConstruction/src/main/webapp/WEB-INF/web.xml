@@ -15,6 +15,17 @@
         <param-value>true</param-value>
     </context-param>
 
+    <!-- Codificación global UTF-8 para JSP, Servlets, formularios y JSON -->
+    <filter>
+        <filter-name>Utf8EncodingFilter</filter-name>
+        <filter-class>com.utp.logiconstruction.filter.Utf8EncodingFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>Utf8EncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
     <servlet>
         <servlet-name>ConfigDBServlet</servlet-name>
         <servlet-class>com.utp.logiconstruction.servlet.ConfigDBServlet</servlet-class>
@@ -46,6 +57,7 @@
         <url-pattern>*.xhtml</url-pattern>
     </servlet-mapping>
 
+
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
@@ -53,5 +65,18 @@
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
+
+    <jsp-config>
+        <jsp-property-group>
+            <url-pattern>*.jsp</url-pattern>
+            <page-encoding>UTF-8</page-encoding>
+            <default-content-type>text/html;charset=UTF-8</default-content-type>
+        </jsp-property-group>
+        <jsp-property-group>
+            <url-pattern>*.jspf</url-pattern>
+            <page-encoding>UTF-8</page-encoding>
+            <default-content-type>text/html;charset=UTF-8</default-content-type>
+        </jsp-property-group>
+    </jsp-config>
 
 </web-app>
