@@ -20,7 +20,7 @@
     ReporteDAO dao = new ReporteDAO();
 
     int totalCompras = dao.contarCompras();
-    int totalProveedores = dao.contarProveedores();
+    int totalProveedores = dao.contarProveedoresActivos();
     int totalRequerimientos = dao.contarRequerimientos();
     String materialMasComprado = dao.obtenerMaterialMasComprado();
     String ultimaCompra = dao.obtenerUltimaCompra();
@@ -96,6 +96,14 @@
             <i class="fa-solid fa-chart-simple"></i>
             Reportes
         </a>
+        <a href="analisisCostos.jsp">
+            <i class="fa-solid fa-coins"></i>
+            Análisis de costos
+        </a>
+        <a href="alertasGerenciales.jsp">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            Alertas gerenciales
+        </a>
         <% } %>
 
     </nav>
@@ -142,7 +150,11 @@
                     <%= totalProveedores %> proveedores activos.
                 </p>
 
+                <% if (esGerencia) { %>
+                <a href="reportes.jsp">Ver reportes gerenciales</a>
+                <% } else { %>
                 <a href="requerimientos.jsp">Ver requerimientos</a>
+                <% } %>
             </div>
 
             <div class="dash-watermark">
@@ -166,7 +178,9 @@
                     seguimiento de pedidos y facturación.
                 </p>
 
+                <% if (esJefeLogistica) { %>
                 <a href="compras.jsp">Gestionar ahora ›</a>
+                <% } else { %><span class="dash-readonly">Consulta mediante reportes</span><% } %>
 
             </div>
 
@@ -183,7 +197,9 @@
                     evaluaciones y catálogo de materiales.
                 </p>
 
+                <% if (esJefeLogistica) { %>
                 <a href="proveedores.jsp">Administrar lista ›</a>
+                <% } else { %><span class="dash-readonly">Consulta mediante reportes</span><% } %>
 
             </div>
 
@@ -200,7 +216,9 @@
                     y control de solicitudes internas.
                 </p>
 
+                <% if (esAdministradorObra || esJefeLogistica) { %>
                 <a href="requerimientos.jsp">Revisar registros ›</a>
+                <% } else { %><span class="dash-readonly">Consulta mediante reportes</span><% } %>
 
             </div>
 
@@ -222,6 +240,22 @@
                 <% } %>
 
             </div>
+
+            <% if (esGerencia) { %>
+            <div class="dash-card">
+                <div class="dash-card-icon orange"><i class="fa-solid fa-coins"></i></div>
+                <h3>Análisis de costos</h3>
+                <p>Filtros, tendencias mensuales y detalle de gastos por proveedor.</p>
+                <a href="analisisCostos.jsp">Analizar costos ›</a>
+            </div>
+
+            <div class="dash-card">
+                <div class="dash-card-icon green"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                <h3>Alertas gerenciales</h3>
+                <p>Seguimiento de requerimientos, compras y proveedores que requieren atención.</p>
+                <a href="alertasGerenciales.jsp">Revisar alertas ›</a>
+            </div>
+            <% } %>
 
         </div>
 

@@ -1,19 +1,29 @@
 package com.utp.logiconstruction.modelo;
 
+import java.math.BigDecimal;
+
 public class Compra {
 
     private int id;
     private String proveedor;
     private String producto;
     private int cantidad;
+    private String fecha;
+    private String estado;
+    private BigDecimal costoUnitario;
+    private String observacion;
 
     public Compra() {
     }
 
-    public Compra(String proveedor, String producto, int cantidad) {
+    public Compra(String proveedor, String producto, int cantidad,
+            String estado, BigDecimal costoUnitario, String observacion) {
         this.proveedor = proveedor;
         this.producto = producto;
         this.cantidad = cantidad;
+        this.estado = estado;
+        this.costoUnitario = costoUnitario;
+        this.observacion = observacion;
     }
 
     public int getId() {
@@ -46,5 +56,44 @@ public class Compra {
 
     public void setCantidad(int cantidad) {
         this.cantidad = cantidad;
+    }
+
+    public String getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(String fecha) {
+        this.fecha = fecha;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public BigDecimal getCostoUnitario() {
+        return costoUnitario;
+    }
+
+    public void setCostoUnitario(BigDecimal costoUnitario) {
+        this.costoUnitario = costoUnitario;
+    }
+
+    public String getObservacion() {
+        return observacion;
+    }
+
+    public void setObservacion(String observacion) {
+        this.observacion = observacion;
+    }
+
+    public BigDecimal getCostoTotal() {
+        if (costoUnitario == null) {
+            return BigDecimal.ZERO;
+        }
+        return costoUnitario.multiply(BigDecimal.valueOf(cantidad));
     }
 }

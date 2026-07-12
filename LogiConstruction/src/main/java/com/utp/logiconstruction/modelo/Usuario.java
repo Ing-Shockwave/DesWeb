@@ -1,20 +1,23 @@
 package com.utp.logiconstruction.modelo;
 
-public class Usuario {
+import java.io.Serializable;
+
+public class Usuario implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     private int idUsuario;
     private String nombre;
     private String correo;
-    private String password;
     private String rol;
 
     public Usuario() {
     }
 
-    public Usuario(int idUsuario, String nombre, String correo, String password, String rol) {
+    public Usuario(int idUsuario, String nombre, String correo, String rol) {
         this.idUsuario = idUsuario;
         this.nombre = nombre;
         this.correo = correo;
-        this.password = password;
         this.rol = rol;
     }
 
@@ -40,14 +43,6 @@ public class Usuario {
 
     public void setCorreo(String correo) {
         this.correo = correo;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getRol() {

@@ -15,4 +15,4 @@ Credenciales iniciales del sistema:
 - gerencia@logiconstruction.com / 123456 / GERENCIA
 
 Nota:
-Este script elimina tablas anteriores de logiconstruction para dejar una estructura limpia y compatible con el código Java actual.
+Este script elimina tablas anteriores de logiconstruction para dejar una estructura limpia y compatible.

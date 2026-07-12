@@ -21,24 +21,26 @@ public class CompraApiServlet extends HttpServlet {
         JsonUtil.prepararRespuestaJson(response);
         List<Compra> compras = new CompraDAO().listarCompras();
 
-        StringBuilder json = new StringBuilder();
-        json.append("[");
+        StringBuilder json = new StringBuilder("[");
         for (int i = 0; i < compras.size(); i++) {
             Compra c = compras.get(i);
-            if (i > 0) {
-                json.append(",");
-            }
-            json.append("{")
-                    .append("\"id\":").append(c.getId()).append(",")
-                    .append("\"proveedor\":").append(JsonUtil.texto(c.getProveedor())).append(",")
-                    .append("\"producto\":").append(JsonUtil.texto(c.getProducto())).append(",")
-                    .append("\"cantidad\":").append(c.getCantidad())
-                    .append("}");
+            if (i > 0) json.append(',');
+            json.append('{')
+                    .append("\"id\":").append(c.getId()).append(',')
+                    .append("\"proveedor\":").append(JsonUtil.texto(c.getProveedor())).append(',')
+                    .append("\"producto\":").append(JsonUtil.texto(c.getProducto())).append(',')
+                    .append("\"cantidad\":").append(c.getCantidad()).append(',')
+                    .append("\"fecha\":").append(JsonUtil.texto(c.getFecha())).append(',')
+                    .append("\"estado\":").append(JsonUtil.texto(c.getEstado())).append(',')
+                    .append("\"costoUnitario\":").append(c.getCostoUnitario() == null ? "0" : c.getCostoUnitario()).append(',')
+                    .append("\"costoTotal\":").append(c.getCostoTotal()).append(',')
+                    .append("\"observacion\":").append(JsonUtil.texto(c.getObservacion()))
+                    .append('}');
         }
-        json.append("]");
+        json.append(']');
 
         try (PrintWriter out = response.getWriter()) {
-            out.print(json.toString());
+            out.print(json);
         }
     }
 

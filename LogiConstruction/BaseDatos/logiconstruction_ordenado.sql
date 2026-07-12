@@ -34,11 +34,12 @@ SET FOREIGN_KEY_CHECKS = 1;
 
 
 
+-- Las contraseñas se almacenan con PBKDF2-HMAC-SHA256.
 CREATE TABLE usuarios (
   id_usuario INT NOT NULL AUTO_INCREMENT,
   nombre VARCHAR(100) NOT NULL,
   correo VARCHAR(100) NOT NULL,
-  password VARCHAR(100) NOT NULL,
+  password VARCHAR(255) NOT NULL,
   rol ENUM('ADMINISTRADOR_OBRA','JEFE_LOGISTICA','GERENCIA') NOT NULL,
   estado ENUM('ACTIVO','INACTIVO') NOT NULL DEFAULT 'ACTIVO',
   fecha_creacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -101,9 +102,9 @@ CREATE TABLE compras (
 
 
 INSERT INTO usuarios (id_usuario, nombre, correo, password, rol, estado) VALUES
-(1, 'Administrador Obra', 'obra@logiconstruction.com', '123456', 'ADMINISTRADOR_OBRA', 'ACTIVO'),
-(2, 'Jefe Logística', 'logistica@logiconstruction.com', '123456', 'JEFE_LOGISTICA', 'ACTIVO'),
-(3, 'Gerencia', 'gerencia@logiconstruction.com', '123456', 'GERENCIA', 'ACTIVO');
+(1, 'Administrador Obra', 'obra@logiconstruction.com', 'pbkdf2_sha256$210000$LNmvh3f8y+NuOWY9nT7hkw==$4sP4ENQmuGocXD06NldGVIzOqzq7+7SfPT6Yq+dqsn4=', 'ADMINISTRADOR_OBRA', 'ACTIVO'),
+(2, 'Jefe Logística', 'logistica@logiconstruction.com', 'pbkdf2_sha256$210000$b3pcMNI3upAQlJCp6/O7MA==$eBWg7PZTJhIqxZHM93rYJ0V/AVq/Vi01ajW56FDwBgo=', 'JEFE_LOGISTICA', 'ACTIVO'),
+(3, 'Gerencia', 'gerencia@logiconstruction.com', 'pbkdf2_sha256$210000$+kEPCaDPrXR72/g7HXI3/g==$jj9G1qWEAJIPWIRgyxjn6hni9HKarnsZIDwj4xSZL1w=', 'GERENCIA', 'ACTIVO');
 
 INSERT INTO proveedores (id, nombre, ruc, telefono, correo, direccion, estado) VALUES
 (1, 'MATEL S.A.C.', '20123456789', '997011272', 'ventas@matel.com', 'Lima, Perú', 'ACTIVO'),

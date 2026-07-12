@@ -16,30 +16,11 @@ public class ProveedorDAO {
     }
 
     public boolean registrarProveedor(Proveedor proveedor) {
-        EntityManager entityManager = null;
-        EntityTransaction transaction = null;
+        return ejecutarTransaccion(proveedor, false);
+    }
 
-        ultimoError = null;
-
-        try {
-            entityManager = JpaUtil.crearEntityManager();
-            transaction = entityManager.getTransaction();
-            transaction.begin();
-            entityManager.persist(proveedor);
-            transaction.commit();
-            return true;
-        } catch (Exception e) {
-            if (transaction != null && transaction.isActive()) {
-                transaction.rollback();
-            }
-            ultimoError = obtenerMensajeCompleto(e);
-            e.printStackTrace();
-            return false;
-        } finally {
-            if (entityManager != null && entityManager.isOpen()) {
-                entityManager.close();
-            }
-        }
+    public boolean actualizarProveedor(Proveedor proveedor) {
+        return ejecutarTransaccion(proveedor, true);
     }
 
     public List<Proveedor> listarProveedores() {
@@ -70,8 +51,47 @@ public class ProveedorDAO {
             transaction.begin();
 
             Proveedor proveedor = entityManager.find(Proveedor.class, id);
-            if (proveedor != null) {
-                entityManager.remove(proveedor);
+            if (proveedor == null) {
+                transaction.rollback();
+                return false;
+            }
+
+            entityManager.remove(proveedor);
+            transaction.commit();
+            return true;
+        } catch (Exception e) {
+            if (transaction != null && transaction.isActive()) {
+                transaction.rollback();
+            }
+            ultimoError = obtenerMensajeCompleto(e);
+            e.printStackTrace();
+            return false;
+        } finally {
+            if (entityManager != null && entityManager.isOpen()) {
+                entityManager.close();
+            }
+        }
+    }
+
+    private boolean ejecutarTransaccion(Proveedor proveedor, boolean actualizar) {
+        EntityManager entityManager = null;
+        EntityTransaction transaction = null;
+        ultimoError = null;
+
+        try {
+            entityManager = JpaUtil.crearEntityManager();
+            transaction = entityManager.getTransaction();
+            transaction.begin();
+
+            if (actualizar) {
+                if (entityManager.find(Proveedor.class, proveedor.getId()) == null) {
+                    transaction.rollback();
+                    ultimoError = "El proveedor no existe.";
+                    return false;
+                }
+                entityManager.merge(proveedor);
+            } else {
+                entityManager.persist(proveedor);
             }
 
             transaction.commit();
@@ -80,6 +100,7 @@ public class ProveedorDAO {
             if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }
+            ultimoError = obtenerMensajeCompleto(e);
             e.printStackTrace();
             return false;
         } finally {
@@ -105,5 +126,4 @@ public class ProveedorDAO {
 
         return mensaje.toString();
     }
-
 }

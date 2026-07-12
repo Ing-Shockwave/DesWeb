@@ -21,25 +21,24 @@ public class ProveedorApiServlet extends HttpServlet {
         JsonUtil.prepararRespuestaJson(response);
         List<Proveedor> proveedores = new ProveedorDAO().listarProveedores();
 
-        StringBuilder json = new StringBuilder();
-        json.append("[");
+        StringBuilder json = new StringBuilder("[");
         for (int i = 0; i < proveedores.size(); i++) {
             Proveedor p = proveedores.get(i);
-            if (i > 0) {
-                json.append(",");
-            }
-            json.append("{")
-                    .append("\"id\":").append(p.getId()).append(",")
-                    .append("\"nombre\":").append(JsonUtil.texto(p.getNombre())).append(",")
-                    .append("\"ruc\":").append(JsonUtil.texto(p.getRuc())).append(",")
-                    .append("\"telefono\":").append(JsonUtil.texto(p.getTelefono())).append(",")
-                    .append("\"correo\":").append(JsonUtil.texto(p.getCorreo()))
-                    .append("}");
+            if (i > 0) json.append(',');
+            json.append('{')
+                    .append("\"id\":").append(p.getId()).append(',')
+                    .append("\"nombre\":").append(JsonUtil.texto(p.getNombre())).append(',')
+                    .append("\"ruc\":").append(JsonUtil.texto(p.getRuc())).append(',')
+                    .append("\"telefono\":").append(JsonUtil.texto(p.getTelefono())).append(',')
+                    .append("\"correo\":").append(JsonUtil.texto(p.getCorreo())).append(',')
+                    .append("\"direccion\":").append(JsonUtil.texto(p.getDireccion())).append(',')
+                    .append("\"estado\":").append(JsonUtil.texto(p.getEstado()))
+                    .append('}');
         }
-        json.append("]");
+        json.append(']');
 
         try (PrintWriter out = response.getWriter()) {
-            out.print(json.toString());
+            out.print(json);
         }
     }
 

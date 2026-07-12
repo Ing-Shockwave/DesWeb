@@ -10,20 +10,23 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
-import javax.faces.application.FacesMessage;
 import javax.enterprise.context.RequestScoped;
-import javax.inject.Named;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.inject.Named;
 
 @Named("requerimientoJsfBean")
 @RequestScoped
 public class RequerimientoJsfBean implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private String nombre;
     private String area;
     private Integer cantidad;
     private String fecha;
+    private String observacion;
     private List<Requerimiento> requerimientos;
 
     @PostConstruct
@@ -52,7 +55,9 @@ public class RequerimientoJsfBean implements Serializable {
                 nombre.trim(),
                 area.trim(),
                 cantidad,
-                fecha.trim()
+                fecha.trim(),
+                "PENDIENTE",
+                normalizarOpcional(observacion)
         );
 
         boolean registrado = new RequerimientoDAO().registrarRequerimiento(requerimiento);
@@ -60,7 +65,7 @@ public class RequerimientoJsfBean implements Serializable {
         if (registrado) {
             agregarMensaje(FacesMessage.SEVERITY_INFO,
                     "Requerimiento registrado",
-                    "El registro fue guardado correctamente desde la página JSF.");
+                    "El registro fue guardado en estado PENDIENTE.");
             limpiarFormulario();
         } else {
             agregarMensaje(FacesMessage.SEVERITY_ERROR,
@@ -79,35 +84,51 @@ public class RequerimientoJsfBean implements Serializable {
     private boolean validarDatos() {
         boolean valido = true;
 
-        if (nombre == null || nombre.trim().length() < 2) {
+        if (nombre == null || nombre.trim().length() < 2 || nombre.trim().length() > 100) {
             agregarMensaje(FacesMessage.SEVERITY_ERROR,
                     "Material inválido",
-                    "El nombre del material es obligatorio y debe tener al menos 2 caracteres.");
+                    "El nombre del material debe tener entre 2 y 100 caracteres.");
             valido = false;
         }
 
-        if (area == null || area.trim().length() < 2) {
+        if (area == null || area.trim().length() < 2 || area.trim().length() > 100) {
             agregarMensaje(FacesMessage.SEVERITY_ERROR,
                     "Área inválida",
-                    "El área solicitante es obligatoria y debe tener al menos 2 caracteres.");
+                    "El área solicitante debe tener entre 2 y 100 caracteres.");
             valido = false;
         }
 
-        if (cantidad == null || cantidad < 1) {
+        if (cantidad == null || cantidad < 1 || cantidad > 1_000_000) {
             agregarMensaje(FacesMessage.SEVERITY_ERROR,
                     "Cantidad inválida",
-                    "La cantidad debe ser mayor a cero.");
+                    "La cantidad debe estar entre 1 y 1 000 000.");
             valido = false;
         }
 
-        if (fecha == null || fecha.trim().isEmpty()) {
+        try {
+            LocalDate.parse(fecha);
+        } catch (Exception e) {
             agregarMensaje(FacesMessage.SEVERITY_ERROR,
                     "Fecha inválida",
-                    "La fecha del requerimiento es obligatoria.");
+                    "La fecha del requerimiento es obligatoria y debe ser válida.");
+            valido = false;
+        }
+
+        if (observacion != null && observacion.trim().length() > 255) {
+            agregarMensaje(FacesMessage.SEVERITY_ERROR,
+                    "Observación inválida",
+                    "La observación no debe superar 255 caracteres.");
             valido = false;
         }
 
         return valido;
+    }
+
+    private String normalizarOpcional(String valor) {
+        if (valor == null || valor.trim().isEmpty()) {
+            return null;
+        }
+        return valor.trim();
     }
 
     private void limpiarFormulario() {
@@ -115,6 +136,7 @@ public class RequerimientoJsfBean implements Serializable {
         area = "";
         cantidad = null;
         fecha = LocalDate.now().toString();
+        observacion = "";
     }
 
     public boolean tieneAccesoAdministradorObra() {
@@ -150,11 +172,7 @@ public class RequerimientoJsfBean implements Serializable {
 
         Map<String, Object> sessionMap = facesContext.getExternalContext().getSessionMap();
         Object usuario = sessionMap.get("usuario");
-
-        if (usuario instanceof Usuario) {
-            return (Usuario) usuario;
-        }
-        return null;
+        return usuario instanceof Usuario ? (Usuario) usuario : null;
     }
 
     private void agregarMensaje(FacesMessage.Severity severity, String resumen, String detalle) {
@@ -178,37 +196,16 @@ public class RequerimientoJsfBean implements Serializable {
         return requerimientos == null ? 0 : requerimientos.size();
     }
 
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getArea() {
-        return area;
-    }
-
-    public void setArea(String area) {
-        this.area = area;
-    }
-
-    public Integer getCantidad() {
-        return cantidad;
-    }
-
-    public void setCantidad(Integer cantidad) {
-        this.cantidad = cantidad;
-    }
-
-    public String getFecha() {
-        return fecha;
-    }
-
-    public void setFecha(String fecha) {
-        this.fecha = fecha;
-    }
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
+    public String getArea() { return area; }
+    public void setArea(String area) { this.area = area; }
+    public Integer getCantidad() { return cantidad; }
+    public void setCantidad(Integer cantidad) { this.cantidad = cantidad; }
+    public String getFecha() { return fecha; }
+    public void setFecha(String fecha) { this.fecha = fecha; }
+    public String getObservacion() { return observacion; }
+    public void setObservacion(String observacion) { this.observacion = observacion; }
 
     public List<Requerimiento> getRequerimientos() {
         if (requerimientos == null) {

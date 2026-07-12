@@ -16,11 +16,13 @@ El proyecto está preparado para ejecutarse en **Apache Tomcat 9** y utiliza paq
 
 ## Características principales
 
-- Inicio de sesión con control de acceso por roles.
-- Gestión de requerimientos de materiales.
-- Gestión de compras.
-- Gestión de proveedores.
-- Dashboard y reportes logísticos.
+- Inicio de sesión con control de acceso por roles y contraseñas protegidas con PBKDF2-HMAC-SHA256.
+- Gestión completa de requerimientos: datos, observación y estados PENDIENTE, APROBADO, RECHAZADO y ATENDIDO.
+- Gestión de compras con proveedor, producto, cantidad, costo unitario, costo total y estados REGISTRADA, RECIBIDA y ANULADA.
+- Gestión completa de proveedores: contacto, dirección y estado ACTIVO/INACTIVO.
+- Dashboard y reportes logísticos calculados con estados y costos reales de la base de datos.
+- Módulo gerencial de análisis de costos con filtros, gráficos y detalle de compras.
+- Módulo de alertas gerenciales para requerimientos, compras y proveedores que requieren seguimiento.
 - DataTables con búsqueda, ordenamiento y paginación.
 - Validaciones en frontend y backend.
 - Configuración portable de conexión a MySQL.
@@ -40,7 +42,7 @@ El proyecto está preparado para ejecutarse en **Apache Tomcat 9** y utiliza paq
 |---|---|
 | `ADMINISTRADOR_OBRA` | Consulta y registro de requerimientos; acceso a la demostración JSF. |
 | `JEFE_LOGISTICA` | Gestión de compras, proveedores y requerimientos. |
-| `GERENCIA` | Consulta del dashboard, reportes e indicadores generales. |
+| `GERENCIA` | Consulta del dashboard, reportes, análisis de costos y alertas de seguimiento. |
 
 Los permisos también se validan en el backend para evitar el acceso directo a módulos no autorizados.
 
@@ -137,15 +139,23 @@ También puedes descargar el proyecto como ZIP y descomprimirlo.
 Abre MySQL Workbench y ejecuta:
 
 ```text
-BaseDatos/logiconstruction_bd_ordenada_compatible.sql
+BaseDatos/logiconstruction_ordenado.sql
 ```
 
 El script:
 
 - crea la base de datos `logiconstruction`;
 - crea las tablas necesarias;
-- registra datos iniciales;
+- registra datos iniciales con contraseñas protegidas mediante PBKDF2;
 - crea vistas de apoyo para los reportes.
+
+Para actualizar una instalación existente sin recrear las tablas, también se incluye:
+
+```text
+BaseDatos/migracion_seguridad_campos.sql
+```
+
+La aplicación migra automáticamente a PBKDF2 una contraseña antigua en texto plano después de un inicio de sesión válido.
 
 ### 3. Abrir el proyecto en NetBeans
 
@@ -214,6 +224,20 @@ Estas credenciales son únicamente para fines académicos y de demostración.
 
 ---
 
+## Páginas del rol Gerencia
+
+El rol `GERENCIA` dispone de las siguientes páginas de solo lectura:
+
+| Página | Ruta | Finalidad |
+|---|---|---|
+| Reportes | `/LogiConstruction/reportes.jsp` | Indicadores generales y actualización dinámica. |
+| Análisis de costos | `/LogiConstruction/analisisCostos.jsp` | Filtros por fecha, proveedor, producto y estado; gráficos y detalle de gastos. |
+| Alertas gerenciales | `/LogiConstruction/alertasGerenciales.jsp` | Priorización automática de requerimientos, compras y proveedores que requieren seguimiento. |
+
+La pantalla `compras.jsp` ya no solicita ni muestra observaciones de compras. La columna permanece compatible con la base de datos, pero los nuevos registros se guardan sin ese texto.
+
+---
+
 ## API REST
 
 El sistema incorpora endpoints de solo consulta:
@@ -239,7 +263,9 @@ Respuesta aproximada:
     "nombre": "MATEL S.A.C.",
     "ruc": "20123456789",
     "telefono": "997011272",
-    "correo": "ventas@matel.com"
+    "correo": "ventas@matel.com",
+    "direccion": "Lima, Perú",
+    "estado": "ACTIVO"
   }
 ]
 ```
@@ -333,7 +359,8 @@ El botón aparece cerca del final de la página y se muestra junto a LogiBot.
 ```text
 LogiConstruction/
 ├── BaseDatos/
-│   └── logiconstruction_bd_ordenada_compatible.sql
+│   ├── logiconstruction_ordenado.sql
+│   └── migracion_seguridad_campos.sql
 ├── src/
 │   └── main/
 │       ├── java/com/utp/logiconstruction/
@@ -385,7 +412,13 @@ Para el desarrollo habitual se recomienda ejecutar el proyecto desde NetBeans co
 
 ---
 
-## Validaciones implementadas
+## Gestión de campos y validaciones
+
+Los módulos permiten registrar y actualizar los campos definidos en MySQL:
+
+- **Compras:** proveedor, producto, cantidad, costo unitario, estado y observación; el costo total se calcula automáticamente.
+- **Proveedores:** nombre, RUC, teléfono, correo, dirección y estado.
+- **Requerimientos:** material, área, cantidad, fecha, observación y estado. Solo el rol `JEFE_LOGISTICA` puede cambiar el estado de un requerimiento.
 
 Los formularios cuentan con validaciones en distintas capas:
 
@@ -401,9 +434,10 @@ Esto evita depender únicamente de las validaciones del navegador.
 
 ## Seguridad y consideraciones
 
+Las contraseñas de los usuarios se almacenan con **PBKDF2-HMAC-SHA256**, salt aleatorio y 210 000 iteraciones. El objeto guardado en la sesión contiene únicamente el identificador, nombre, correo y rol; nunca incluye la contraseña. El inicio de sesión también renueva la sesión para reducir el riesgo de fijación de sesión.
+
 Este proyecto fue desarrollado con fines académicos. Antes de utilizarlo en un entorno productivo se recomienda:
 
-- almacenar contraseñas con `BCrypt` o `Argon2`;
 - proteger los endpoints REST con autenticación y autorización;
 - utilizar un usuario MySQL exclusivo para la aplicación;
 - no utilizar `root` en producción;
@@ -418,7 +452,6 @@ Este proyecto fue desarrollado con fines académicos. Antes de utilizarlo en un 
 ## Próximas mejoras
 
 - Migrar los módulos restantes de JDBC a JPA.
-- Incorporar edición completa de registros.
 - Implementar autenticación segura para la API REST.
 - Agregar pruebas unitarias y de integración.
 - Incorporar recuperación real de contraseña.

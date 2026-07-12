@@ -148,6 +148,17 @@
                         <h:message for="fecha" styleClass="jsf-error" />
                     </div>
 
+                    <div class="crud-span-2">
+                        <label for="observacion">Observación</label>
+                        <h:inputTextarea id="observacion"
+                                         value="#{requerimientoJsfBean.observacion}"
+                                         pt:placeholder="Justificación o detalle opcional"
+                                         pt:maxlength="255">
+                            <f:validateLength maximum="255" />
+                        </h:inputTextarea>
+                        <h:message for="observacion" styleClass="jsf-error" />
+                    </div>
+
                     <div class="req-btn-box">
                         <h:commandButton value="Registrar con JSF"
                                          action="#{requerimientoJsfBean.registrar}"
@@ -201,6 +212,16 @@
                     <h:column>
                         <f:facet name="header">Fecha</f:facet>
                         <h:outputText value="#{r.fecha}" />
+                    </h:column>
+
+                    <h:column>
+                        <f:facet name="header">Estado</f:facet>
+                        <h:outputText value="#{r.estado}" />
+                    </h:column>
+
+                    <h:column>
+                        <f:facet name="header">Observación</f:facet>
+                        <h:outputText value="#{empty r.observacion ? 'Sin observación' : r.observacion}" />
                     </h:column>
 
                 </h:dataTable>

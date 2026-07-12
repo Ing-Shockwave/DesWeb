@@ -21,25 +21,24 @@ public class RequerimientoApiServlet extends HttpServlet {
         JsonUtil.prepararRespuestaJson(response);
         List<Requerimiento> requerimientos = new RequerimientoDAO().listarRequerimientos();
 
-        StringBuilder json = new StringBuilder();
-        json.append("[");
+        StringBuilder json = new StringBuilder("[");
         for (int i = 0; i < requerimientos.size(); i++) {
             Requerimiento r = requerimientos.get(i);
-            if (i > 0) {
-                json.append(",");
-            }
-            json.append("{")
-                    .append("\"id\":").append(r.getId()).append(",")
-                    .append("\"nombre\":").append(JsonUtil.texto(r.getNombre())).append(",")
-                    .append("\"area\":").append(JsonUtil.texto(r.getArea())).append(",")
-                    .append("\"cantidad\":").append(r.getCantidad()).append(",")
-                    .append("\"fecha\":").append(JsonUtil.texto(r.getFecha()))
-                    .append("}");
+            if (i > 0) json.append(',');
+            json.append('{')
+                    .append("\"id\":").append(r.getId()).append(',')
+                    .append("\"nombre\":").append(JsonUtil.texto(r.getNombre())).append(',')
+                    .append("\"area\":").append(JsonUtil.texto(r.getArea())).append(',')
+                    .append("\"cantidad\":").append(r.getCantidad()).append(',')
+                    .append("\"fecha\":").append(JsonUtil.texto(r.getFecha())).append(',')
+                    .append("\"estado\":").append(JsonUtil.texto(r.getEstado())).append(',')
+                    .append("\"observacion\":").append(JsonUtil.texto(r.getObservacion()))
+                    .append('}');
         }
-        json.append("]");
+        json.append(']');
 
         try (PrintWriter out = response.getWriter()) {
-            out.print(json.toString());
+            out.print(json);
         }
     }
 

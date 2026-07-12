@@ -19,10 +19,15 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String correo = request.getParameter("correo");
+        request.setCharacterEncoding("UTF-8");
+        String correo = limpiar(request.getParameter("correo")).toLowerCase();
         String password = request.getParameter("password");
 
-        // Primero se valida la conexión. Si falla, se envía al usuario a configurar MySQL.
+        if (correo.isEmpty() || password == null || password.isEmpty()) {
+            response.sendRedirect("login.jsp?error=1");
+            return;
+        }
+
         try (Connection connection = DatabaseConfig.probarConexionActual()) {
             // Conexión correcta. Se continúa con el login.
         } catch (Exception e) {
@@ -31,15 +36,25 @@ public class LoginServlet extends HttpServlet {
             return;
         }
 
-        UsuarioDAO usuarioDAO = new UsuarioDAO();
-        Usuario usuario = usuarioDAO.validarLogin(correo, password);
+        Usuario usuario = new UsuarioDAO().validarLogin(correo, password);
 
         if (usuario != null) {
-            HttpSession sesion = request.getSession();
+            // Evita reutilizar un identificador de sesión previo al login.
+            HttpSession anterior = request.getSession(false);
+            if (anterior != null) {
+                anterior.invalidate();
+            }
+
+            HttpSession sesion = request.getSession(true);
+            sesion.setMaxInactiveInterval(30 * 60);
             sesion.setAttribute("usuario", usuario);
             response.sendRedirect("dashboard.jsp");
         } else {
             response.sendRedirect("login.jsp?error=1");
         }
+    }
+
+    private String limpiar(String valor) {
+        return valor == null ? "" : valor.trim();
     }
 }

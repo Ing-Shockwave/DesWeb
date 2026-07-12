@@ -7,15 +7,20 @@ public class Requerimiento {
     private String area;
     private int cantidad;
     private String fecha;
+    private String estado;
+    private String observacion;
 
     public Requerimiento() {
     }
 
-    public Requerimiento(String nombre, String area, int cantidad, String fecha) {
+    public Requerimiento(String nombre, String area, int cantidad, String fecha,
+            String estado, String observacion) {
         this.nombre = nombre;
         this.area = area;
         this.cantidad = cantidad;
         this.fecha = fecha;
+        this.estado = estado;
+        this.observacion = observacion;
     }
 
     public int getId() {
@@ -56,5 +61,21 @@ public class Requerimiento {
 
     public void setFecha(String fecha) {
         this.fecha = fecha;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public String getObservacion() {
+        return observacion;
+    }
+
+    public void setObservacion(String observacion) {
+        this.observacion = observacion;
     }
 }
